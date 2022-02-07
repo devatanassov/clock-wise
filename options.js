@@ -1,3 +1,53 @@
+const elements = {
+  form: document.getElementById("clock-form"),
+  rateType: document.getElementById("rateType"), //perMonth/hour
+  rate: document.getElementById("rate"), //actualValuePerRate
+  currency: document.getElementById("currency"),
+};
+
+const initOptions = (el) => {
+  Object.keys(currencies).map((currencyIndex) => {
+    myOption = document.createElement("option");
+    myOption.text =
+      currencies[currencyIndex].currency +
+      "(" +
+      currencies[currencyIndex].symbol +
+      ")";
+    myOption.value = currencies[currencyIndex].abbreviation;
+    el.appendChild(myOption);
+  });
+
+  // TODO add symbol to options
+  // const number = 123456.78;
+
+  // console.log(
+  //   new Intl.NumberFormat("en-IN", {
+  //     style: "currency",
+  //     currency: "INR",
+  //   }).format(number)
+  // );
+};
+
+initOptions(elements.currency);
+
+elements.form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  let data = {
+    rateType: elements.rateType.value,
+    rate: elements.rate.value,
+    currency: elements.currency.value,
+  };
+  console.log(data);
+
+  chrome.storage.sync.set({ userData: data }, function () {
+    console.log("Value is set to " + data.rateType);
+  });
+
+  chrome.storage.sync.get("userData", (userData) => {
+    console.log(userData);
+  });
+});
+
 let page = document.getElementById("buttonDiv");
 let selectedClassName = "current";
 const presetButtonColors = ["#3aa757", "#e8453c", "#f9bb2d", "#4688f1"];
