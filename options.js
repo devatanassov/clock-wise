@@ -5,6 +5,82 @@ const elements = {
   currency: document.getElementById("currency"),
 };
 
+var rateService = {
+  hoursInMonth: 160, //40 hours a week times 4 weeks
+  hoursInDay: 8, //8 hours a day
+  rateInCentsPerHour: null,
+  calculateRateInCentsPerHour: (rateType, rate) => {
+    if ("monthly" === String(rateType)) {
+      rateService.rateInCentsPerHour =
+        rateService.calculateFromMonthlyRate(rate);
+    }
+
+    if ("hourly" === String(rateType)) {
+      rateService.rateInCentsPerHour = Math.round(parseFloat(rate) * 100);
+    }
+
+    if ("daily" === String(rateType)) {
+      rateService.rateInCentsPerHour = rateService.calculateFromDailyRate(rate);
+    }
+  },
+  calculateFromMonthlyRate: (rate) => {
+    let rateInCents = Math.round(parseFloat(rate) * 100);
+    let rateInCentsPerHour = Math.round(
+      parseFloat(rateInCents / rateService.hoursInMonth)
+    );
+    return rateInCentsPerHour;
+  },
+
+  calculateFromDailyRate: (rate) => {
+    let rateInCents = Math.round(parseFloat(rate) * 100);
+    let rateInCentsPerHour = Math.round(
+      parseFloat(rateInCents / rateService.hoursInDay)
+    );
+    return rateInCentsPerHour;
+  },
+  calculateTimeByPrice: (price) => {
+    if (rateService.rateInCentsPerHour === null) {
+      return false;
+    }
+
+    priceInCents = Math.round(parseFloat(price) * 100);
+
+    priceInHours = priceInCents / rateService.rateInCentsPerHour;
+
+    const representations = [
+      { unit: "seconds", value: 1 },
+      { unit: "minutes", value: 60 },
+      { unit: "hours", value: 3600 },
+      { unit: "days", value: 28800 }, //86400 }, //this needs to be considered 8 working hours
+      { unit: "weeks", value: 144000 }, //604800 }, //this needs to be considered 8 working hours times 5 working days
+      { unit: "months", value: 576000 }, //2419200 }, //this needs to be considered 8 working hours times 5 working days times 4 weeks (lame)
+      { unit: "years", value: 6912000 }, //29030400 }, //this needs to be considered 8 working hours times 5 working days times 4 weeks times 12 months
+    ];
+    let compileResult = "";
+    let priceInSeconds = priceInHours * 60 * 60;
+    representationsReveresed = representations.reverse();
+    for (i in representationsReveresed) {
+      unitCount = Math.floor(priceInSeconds / representations[i].value);
+      if (unitCount == 0) {
+        continue;
+      }
+      compileResult +=
+        unitCount +
+        " " +
+        (unitCount === 1
+          ? representations[i].unit.substring(
+              0,
+              representations[i].unit.length - 1
+            )
+          : representations[i].unit) +
+        ",";
+      priceInSeconds -= unitCount * representations[i].value;
+      continue;
+    }
+    console.log(compileResult);
+  },
+};
+
 const initOptions = (el) => {
   Object.keys(currencies).map((currencyIndex) => {
     myOption = document.createElement("option");
@@ -37,15 +113,14 @@ elements.form.addEventListener("submit", (event) => {
     rate: elements.rate.value,
     currency: elements.currency.value,
   };
-  console.log(data);
 
   chrome.storage.sync.set({ userData: data }, function () {
     console.log("Value is set to " + data.rateType);
   });
 
-  chrome.storage.sync.get("userData", (userData) => {
-    console.log(userData);
-  });
+  // chrome.storage.sync.get("userData", (userData) => {
+  //   console.log(userData);
+  // });
 });
 
 let page = document.getElementById("buttonDiv");
