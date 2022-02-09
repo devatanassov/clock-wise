@@ -1,24 +1,38 @@
-// Initialize button with user's preferred color
-let changeColor = document.getElementById("changeColor");
+let state = {
+  serviceInitiated: false,
+  userDataLoaded: false,
+  userData: null,
+};
 
-chrome.storage.sync.get("color", ({ color }) => {
-  changeColor.style.backgroundColor = color;
+let conversionForm = document.getElementById("converstionForm");
+
+chrome.storage.sync.get("userData", function (data) {
+  if (
+    data.hasOwnProperty("userData") &&
+    data.userData.hasOwnProperty("rateType") &&
+    data.userData.hasOwnProperty("rate") &&
+    data.userData.hasOwnProperty("currency")
+  ) {
+    state.userDataLoaded = true;
+    state.userData = data.userData;
+    rateService.calculateRateInCentsPerHour(
+      data.userData.rateType,
+      data.userData.rate
+    );
+    state.serviceInitiated = true;
+  } else {
+    console.log(data);
+  }
 });
 
-// When the button is clicked, inject setPageBackgroundColor into current page
-changeColor.addEventListener("click", async () => {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    function: setPageBackgroundColor,
-  });
+conversionForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  price = document.getElementById("rate").value;
+  if (state.userDataLoaded && state.serviceInitiated) {
+    letformatetTime = rateService.calculateTimeByPrice(price);
+    document.getElementById("timeToPay").innerHTML = letformatetTime;
+  }
+  // chrome.storage.sync.get("userData", (userData) => {
+  //   console.log(userData);
+  // });
 });
-
-// The body of this function will be executed as a content script inside the
-// current page
-function setPageBackgroundColor() {
-  chrome.storage.sync.get("color", ({ color }) => {
-    document.body.style.backgroundColor = color;
-  });
-}
