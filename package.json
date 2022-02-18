@@ -1,0 +1,78 @@
+{
+  "name": "clock-wise",
+  "description": "Help people to be more money/time spend aware.",
+  "version": "0.0.1",
+  "homepage": "http://chrome.google.com/webstore",
+  "author": "ENTER YOUR NAME HERE",
+  "repository": {
+    "type": "git",
+    "url": "ENTER GIT REPO URL"
+  },
+  "scripts": {
+    "start": "xt-build -e dev -w",
+    "start:firefox": "xt-build -e dev -p firefox -w",
+    "build": "xt-build -e prod",
+    "build:firefox": "xt-build -e prod -p firefox",
+    "clean": "xt-clean",
+    "docs": "xt-docs",
+    "test": "xt-test",
+    "coverage": "nyc --reporter=lcov npm run test",
+    "sync": "xt-sync"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "eslintIgnore": [
+    "test/**/*"
+  ],
+  "devDependencies": {
+    "extension-cli": "^1.2.2"
+  },
+  "xtdocs": {
+    "source": {
+      "include": [
+        "README.md",
+        "src"
+      ]
+    }
+  },
+  "xtbuild": {
+    "js_bundles": [
+      {
+        "name": "background",
+        "src": "./src/background.js"
+      },
+      {
+        "name": "onsite",
+        "src": "./src/onsite.js"
+      },
+      {
+        "name": "options",
+        "src": "./src/options.js"
+      },
+      {
+        "name": "popup",
+        "src": "./src/popup.js"
+      },
+      {
+        "name": "price_detector",
+        "src": "./src/price_detector.js"
+      },
+      {
+        "name": "rate_service",
+        "src": "./src/rate_service.js"
+      }
+    ],
+    "scss_bundles": [
+      {
+        "src": [
+          "./src/onsite.css"
+        ],
+        "name": "onsite"
+      }
+    ]
+  },
+  "dependencies": {}
+}

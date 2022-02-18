@@ -13,6 +13,5 @@ chrome.commands.onCommand.addListener((shortcut) => {
   if (shortcut.includes("+M")) {
     chrome.runtime.reload();
   }
-  chrome.commands.href =
-    "chrome-extension://pjaojblbbbegmbaldodancolnhkolopc/options.html";
+  chrome.commands.href = chrome.runtime.getURL("options.html");
 });

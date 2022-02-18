@@ -1,3 +1,5 @@
+import getCurrencies from "./currencies.js";
+var currencies = getCurrencies();
 const elements = {
   form: document.getElementById("clock-form"),
   rateType: document.getElementById("rateType"), //perMonth/hour
@@ -5,9 +7,9 @@ const elements = {
   currency: document.getElementById("currency"),
 };
 
-const initOptions = (el) => {
+const initOptions = (el, currencies) => {
   Object.keys(currencies).map((currencyIndex) => {
-    myOption = document.createElement("option");
+    var myOption = document.createElement("option");
     myOption.text =
       currencies[currencyIndex].currency +
       "(" +
@@ -28,7 +30,7 @@ const initOptions = (el) => {
   // );
 };
 
-initOptions(elements.currency);
+initOptions(elements.currency, currencies);
 
 elements.form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -47,10 +49,6 @@ elements.form.addEventListener("submit", (event) => {
   //   console.log(userData);
   // });
 });
-
-let page = document.getElementById("buttonDiv");
-let selectedClassName = "current";
-const presetButtonColors = ["#3aa757", "#e8453c", "#f9bb2d", "#4688f1"];
 
 // Reacts to a button click by marking the selected button and saving
 // the selection
