@@ -57,11 +57,21 @@ function scan_dom(depth = 0, node = document.body, detectPrice) {
   }
 }
 
-scan_dom(0, document.body, (potentialPrice) => {
-  potentialPrice[1].innerHTML =
-    potentialPrice[1].innerHTML +
-    // '<button type="button" class="leftmenu btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Popover on top</button>';
-    '<img src="' +
-    exContent.priceIcon +
-    '" data-toggle="popover" title="Popover title" data-content="And here\'s some amazing content. It\'s very engaging. Right?"/>';
+chrome.storage.sync.get("userData", function (data) {
+  console.log(data);
+  if (data.hasOwnProperty("userData")) {
+    if (
+      data.userData.hasOwnProperty("scanPages") &&
+      data.userData.scanPages === true
+    ) {
+      scan_dom(0, document.body, (potentialPrice) => {
+        potentialPrice[1].innerHTML =
+          potentialPrice[1].innerHTML +
+          // '<button type="button" class="leftmenu btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Popover on top</button>';
+          '<img src="' +
+          exContent.priceIcon +
+          '" data-toggle="popover" title="Popover title" data-content="And here\'s some amazing content. It\'s very engaging. Right?"/>';
+      });
+    }
+  }
 });

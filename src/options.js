@@ -5,6 +5,7 @@ const elements = {
   rateType: document.getElementById("rateType"), //perMonth/hour
   rate: document.getElementById("rate"), //actualValuePerRate
   currency: document.getElementById("currency"),
+  scanPages: document.getElementById("scanPages"),
 };
 
 const initOptions = (el, currencies) => {
@@ -17,6 +18,32 @@ const initOptions = (el, currencies) => {
       ")";
     myOption.value = currencies[currencyIndex].abbreviation;
     el.appendChild(myOption);
+  });
+
+  //fetch available data from storage
+  chrome.storage.sync.get("userData", function (data) {
+    if (data.hasOwnProperty("userData")) {
+      if (data.userData.hasOwnProperty("rateType")) {
+        elements.rateType.value = data.userData.rateType;
+      }
+
+      if (data.userData.hasOwnProperty("currency")) {
+        elements.currency.value = data.userData.currency;
+      }
+
+      if (data.userData.hasOwnProperty("rate")) {
+        elements.rate.value = data.userData.rate;
+      }
+
+      if (data.userData.hasOwnProperty("scanPages")) {
+        elements.scanPages.checked = data.userData.scanPages;
+      }
+      // avalableData.rateType =  ?? null;
+      // avalableData.rate = data.userData.hasOwnProperty("rate") ?? null;
+      // avalableData.currency = data.userData.hasOwnProperty("currency") ?? null;
+      // avalableData.scanPages =
+      //   data.userData.hasOwnProperty("scanPages") ?? null;
+    }
   });
 
   // TODO add symbol to options
@@ -38,8 +65,9 @@ elements.form.addEventListener("submit", (event) => {
     rateType: elements.rateType.value,
     rate: elements.rate.value,
     currency: elements.currency.value,
+    scanPages: elements.scanPages.checked,
   };
-
+  console.log(data);
   chrome.storage.sync.set({ userData: data }, function () {
     console.log("Value is set to ");
     console.log(data);
